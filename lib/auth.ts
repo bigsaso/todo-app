@@ -2,39 +2,34 @@
 
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
-// Call this function on every page where you need to protect the route
-export const redirectToLoginIfNotAuthenticated = () => {
-
+export const useRedirectToLoginIfNotAuthenticated = () => {
   const router = useRouter();
 
-  const checkJWTExpiration = () => {
+  const checkJWTExpiration = useCallback(() => {
     const token = localStorage.getItem('jwt');
-    if(token){
+    if(token) {
       const { exp } = jwtDecode<{ exp: number }>(token);
-      console.log(exp);
-      const expirationdate: any = new Date(exp*1000);
+      const expirationDate: any = new Date(exp * 1000);
       const now: any = new Date();
-      if(now>=expirationdate){
-          localStorage.removeItem('jwt');
-          localStorage.removeItem('user_id');
-          router.push('/login');
-      } else{
-          setTimeout(checkJWTExpiration, expirationdate-now);
+      if (now >= expirationDate) {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('user_id');
+        router.push('/login');
+      } else {
+        const timeout = setTimeout(checkJWTExpiration, expirationDate - now);
+        return () => clearTimeout(timeout);
       }
     }
-  }
+  }, [router]); // Dependency array
 
   useEffect(() => {
     const token = localStorage.getItem('jwt');
-
     if (!token) {
       router.push('/login');
-    }
-    else {
+    } else {
       checkJWTExpiration();
     }
-  }, [router]);
-
+  }, [router, checkJWTExpiration]); // Include checkJWTExpiration in the dependency array
 };

@@ -30,11 +30,11 @@ interface User {
   todos: Todo[];
 }
 
-import { redirectToLoginIfNotAuthenticated } from '@/lib/auth';
+import { useRedirectToLoginIfNotAuthenticated } from '@/lib/auth';
 
 export default function Home() {
 
-  redirectToLoginIfNotAuthenticated();
+  useRedirectToLoginIfNotAuthenticated();
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [user, setUser] = useState<User>();
@@ -67,7 +67,7 @@ export default function Home() {
     <div className="space-y-2">
       <h1 className="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">{user ? `Todos for ${user.username}` : 'No user logged in'}</h1>
       {todos.map(todo => (
-        <div id={`${todo.id}`} className="grid grid-cols-2 items-center">
+        <div id={`${todo.id}`} key={todo.id} className="grid grid-cols-2 items-center">
           <label
             htmlFor={`${todo.id}`}
             className={todo.completed ? "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 line-through" : "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"}

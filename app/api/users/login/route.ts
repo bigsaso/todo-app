@@ -50,10 +50,14 @@ export async function POST(request: Request) {
                 lastLogin: now.toISOString()
             },
         });
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error("JWT Secret is undefined. Set the JWT_SECRET environment variable.");
+        }
         // Generate JWT token
         const token = jwt.sign(
             { userId: user.id, email: user.email }, // Payload
-            process.env.JWT_SECRET,                 // Secret key
+            jwtSecret,                 // Secret key
             { expiresIn: '24h' }                    // Options: Token expires in 24 hours
         );
 
