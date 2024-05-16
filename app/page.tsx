@@ -34,6 +34,8 @@ import { useRedirectToLoginIfNotAuthenticated } from '@/lib/auth';
 
 export default function Home() {
 
+  const api_url = process.env.NEXT_PUBLIC_API_URL;
+
   useRedirectToLoginIfNotAuthenticated();
 
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -47,7 +49,7 @@ export default function Home() {
     const fetchTodos = async () => {
       const user_id = localStorage.getItem("user_id");
       try {
-        const response = await axios.get(`http://localhost:3000/api/users/${user_id}`);
+        const response = await axios.get(`${api_url}/api/users/${user_id}`);
         setTodos(response.data.todos);
         setUser(response.data);
         setLoading(false);
